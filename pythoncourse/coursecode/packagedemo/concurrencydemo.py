@@ -31,7 +31,7 @@ def time_func(func):
         x = func()
         duration = str(round(time.time() - start_time, 1))
 
-        print("Function ran in %s seconds" %duration)
+        print(f"Function ran in {duration} seconds")
 
         return x
 

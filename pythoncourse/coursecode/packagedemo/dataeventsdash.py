@@ -108,14 +108,14 @@ def load_minute_data(ticker, start_date='01 Jan 2019', finish_date='30 Jun 2019'
 
     market = Market(market_data_generator=MarketDataGenerator())
 
-    compression_type = 'gzip'  # you can change this to 'snappy' if you want!
-
     # Only download file if not on disk (slow to download)
     if not (os.path.exists(raw_data_path + ticker + '_1min.gzip')):
         df_tick = market.fetch_market(md_request)
 
         df_tick['mid'] = (df_tick[ticker + '.bid'] + df_tick[ticker + '.ask']) / 2.0
         df_minute = pd.DataFrame(df_tick['mid'].resample("1min").first()).dropna()
+        compression_type = 'gzip'  # you can change this to 'snappy' if you want!
+
         df_minute.to_parquet(raw_data_path + ticker + '_1min.gzip',
                              compression=compression_type, engine='fastparquet')
     else:
@@ -139,9 +139,7 @@ def load_data_events():
     df_ecb_times = pd.read_csv(url_ecb, index_col=0)
     df_ecb_times.index = pd.to_datetime(df_ecb_times.index)
 
-    event_dict = {'NFP': df_nfp_times, 'ECB': df_ecb_times}
-
-    return event_dict
+    return {'NFP': df_nfp_times, 'ECB': df_ecb_times}
 
 # Create an event study based on user's event times and a 1 minute history for our asset, using EventStudy
 def calculate_event(df_minute, df_event_times, mins, cumsum=True):
@@ -202,19 +200,12 @@ def callback_event_study_chart(dropdown_data_events, dropdown_asset, dropdown_mi
     # Conduct event study using market data and event times
     df_event = calculate_event(df_minute, df_event_times, int(dropdown_minutes), cumsum=True)
 
-    # Do plot of event study
-    event_chart = plot_event(df_event, 'Event study around ' + dropdown_data_events)
-
-    return event_chart
+    return plot_event(df_event, 'Event study around ' + dropdown_data_events)
 
 # Load up 1 minute market data and event dictionaries
 # First time this runs it will take a while, given has to download from DukasCopy
 # rather than reading from disk (which it will do on subsequent occasions)
-market_dict = {}
-
-for t in tickers:
-    market_dict[t] = load_minute_data(t)
-
+market_dict = {t: load_minute_data(t) for t in tickers}
 event_dict = load_data_events()
 
 # Press the "STOP" button once you've finished (or restart the Python kernel)

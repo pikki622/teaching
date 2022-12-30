@@ -67,17 +67,17 @@ def strip_input_code_from_ipynb(input_file_list):
         import json
         nb = json.loads(contents)
 
-        for i in range(0, len(nb['cells'])):
+        for i in range(len(nb['cells'])):
             if 'source' in nb['cells'][i].keys() and nb['cells'][i]["cell_type"] == 'code':
 
                 new_source = []
 
-                for j in range(0, len(nb['cells'][i]['source'])):
+                for j in range(len(nb['cells'][i]['source'])):
 
                     pot_str = nb['cells'][i]['source'][j].strip()
 
                     if len(pot_str) >= 1:
-                        if '#' == pot_str[0] or '#k' in pot_str.lower():
+                        if pot_str[0] == '#' or '#k' in pot_str.lower():
                             try:
                                 pot2 = pot_str[1]
                             except:

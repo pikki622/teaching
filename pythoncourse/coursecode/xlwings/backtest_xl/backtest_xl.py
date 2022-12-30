@@ -109,7 +109,9 @@ def construct_backtest(ticker, vendor_ticker, sma_period, data_source, start_dat
 
     # Get the returns and signals for the portfolio
     port = backtest.portfolio_cum()
-    port.columns = [indicator + ' = ' + str(tech_params.sma_period) + ' ' + str(backtest.portfolio_pnl_desc()[0])]
+    port.columns = [
+        f'{indicator} = {str(tech_params.sma_period)} {str(backtest.portfolio_pnl_desc()[0])}'
+    ]
     signals = backtest.portfolio_signal()
     # returns = backtest.pnl()
 
@@ -150,13 +152,13 @@ def get_mid_price(raw_data_path, ticker='EURUSD'):
 
     market = Market(market_data_generator=MarketDataGenerator())
 
-    compression_type = 'gzip'  # you can change this to 'snappy' if you want!
-
     # Only download file if not on disk (slow to download),
     # then write to disk as parquet and CSV
     # Note: writing to CSV takes a long time, so we have commented it here!
     if not (os.path.exists(os.path.join(raw_data_path, ticker + '.gzip'))):
         df_tick = market.fetch_market(md_request)
+
+        compression_type = 'gzip'  # you can change this to 'snappy' if you want!
 
         df_tick.to_parquet(os.path.join(raw_data_path, ticker + '.gzip'), compression=compression_type,
                            engine='fastparquet')

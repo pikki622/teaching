@@ -85,11 +85,11 @@ symbols, names = np.array(sorted(symbol_dict.items())).T
 
 quotes = []
 
+url = ('https://raw.githubusercontent.com/scikit-learn/examples-data/'
+       'master/financial-data/{}.csv')
+
 for symbol in symbols:
     print('Fetching quote history for %r' % symbol, file=sys.stderr)
-    url = ('https://raw.githubusercontent.com/scikit-learn/examples-data/'
-           'master/financial-data/{}.csv')
-
     stock = pd.read_csv(url.format(symbol))
 
     print(stock)
