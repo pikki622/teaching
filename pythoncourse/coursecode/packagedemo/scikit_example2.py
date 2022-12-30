@@ -56,7 +56,7 @@ df_market = df_market.resample('W').last()
 
 # for crosses quoted xxxUSD, make USD base currency
 for c in df_market.columns:
-    if 'USD' != c[0:3]:
+    if c[:3] != 'USD':
         df_market[c] = 1.0 / df_market[c]
 
 # calculate returns (and strip out the first day, where return is undefined)

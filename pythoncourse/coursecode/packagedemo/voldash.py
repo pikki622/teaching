@@ -112,10 +112,16 @@ def load_data():
      dash.dependencies.Input('dropdown-tenor', 'value')])
 def callback_vol_chart(dropdown_asset, dropdown_tenor):
 
-    print(dropdown_asset + ' ' + dropdown_tenor)
-    df_vol = df_ret[dropdown_asset + '.close'].rolling(int(dropdown_tenor)).std() * math.sqrt(252) * 100.0
+    print(f'{dropdown_asset} {dropdown_tenor}')
+    df_vol = (
+        df_ret[f'{dropdown_asset}.close'].rolling(int(dropdown_tenor)).std()
+        * math.sqrt(252)
+        * 100.0
+    )
 
-    return chart.plot(df_vol, style=style_vol), chart.plot(df_spot[dropdown_asset + '.close'], style=style_spot)
+    return chart.plot(df_vol, style=style_vol), chart.plot(
+        df_spot[f'{dropdown_asset}.close'], style=style_spot
+    )
 
 df_spot, df_ret = load_data()
 

@@ -40,14 +40,13 @@ Add links like this [Burger King](http://www.burgerking.com).
     dash.dependencies.Output('output-burger', 'children'),
     [dash.dependencies.Input('dropdown-burger', 'value')])
 def callback_color(dropdown_value):
-    return "The selected burger is %s." % dropdown_value
+    return f"The selected burger is {dropdown_value}."
 
 @app_hello.callback(
     dash.dependencies.Output('output-size', 'children'),
     [dash.dependencies.Input('dropdown-burger', 'value'),
      dash.dependencies.Input('dropdown-size', 'value')])
 def callback_size(dropdown_burger, dropdown_size):
-    return "The chosen burger is a %s %s one." %(dropdown_size,
-                                                  dropdown_burger)
+    return f"The chosen burger is a {dropdown_size} {dropdown_burger} one."
 
 app_hello.run_server(threaded=True) # debug=True

@@ -24,7 +24,7 @@ def clean_dataframe(df, year, month):
     # Drop any 'Unnamed' columns
     df.drop(list(df.filter(regex='Unnamed')), axis=1, inplace=True)
 
-    print('Converting to date/time and adding index {}-{}'.format(year, month))
+    print(f'Converting to date/time and adding index {year}-{month}')
 
     for d in date_cols:
         df[d] = pd.to_datetime(df[d])
@@ -55,7 +55,7 @@ def add_web_mercator_coordinates(df):
 
 
 def get_cols(url):
-    s = requests.get(url, headers={'Range': 'bytes=%s-%s' % (0, 10000)}).text
+    s = requests.get(url, headers={'Range': 'bytes=0-10000'}).text
     cols = list(pd.read_csv(StringIO(s)).columns)
 
     extra_cols = 0
@@ -66,7 +66,7 @@ def get_cols(url):
             pd.read_csv(StringIO(s), names=cols, index_col=False, skiprows=1)
             keep_reading = False
         except:
-            cols.append("Unnamed: " + str(extra_cols))
+            cols.append(f"Unnamed: {str(extra_cols)}")
             extra_cols = extra_cols + 1
 
     return cols
@@ -82,9 +82,9 @@ for year in years:
         csv_file = raw_data_path + "nyc-{}-{:0=2d}.csv".format(year, month)
 
         if os.path.exists(parquet_file):
-            print('Already downloaded {}-{}'.format(year, month))
+            print(f'Already downloaded {year}-{month}')
         else:
-            print('Downloading {}-{}'.format(year, month))
+            print(f'Downloading {year}-{month}')
             url = "https://s3.amazonaws.com/nyc-tlc/trip+data/" + \
                   "yellow_tripdata_{}-{:0=2d}.csv".format(year, month)
 
@@ -108,7 +108,8 @@ for year in years:
 import vaex
 
 # Grab the years and months specified at the top of the notebook
-years_vaex = [2015]; months_vaex = months
+years_vaex = [2015]
+months_vaex = months
 
 # If we want Feb/Mar 2015 only (if we have slow internet, and very little hard disk space)
 # years_vaex = [2015]; months_vaex = [2, 3]
@@ -121,13 +122,13 @@ for year in years_vaex:
         arrow_file = raw_data_path + "nyc-{}-{:0=2d}.arrow".format(year, month)
 
         if os.path.exists(parquet_file) and not (os.path.exists(arrow_file)):
-            print('Convert Parquet file into Arrow file for {}-{}'.format(year, month))
+            print(f'Convert Parquet file into Arrow file for {year}-{month}')
 
             df_parquet = pd.read_parquet(parquet_file, engine='fastparquet')
             df_vaex = vaex.from_pandas(df_parquet)
             df_vaex.export(arrow_file)
         elif os.path.exists(arrow_file):
-            print('Arrow file already exists for {}-{}'.format(year, month))
+            print(f'Arrow file already exists for {year}-{month}')
 
         if os.path.exists(arrow_file):
             arrow_file_list.append(arrow_file)

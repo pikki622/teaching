@@ -56,21 +56,20 @@ Add links like this [Pizza Express](https://www.pizzaexpress.com/).
     dash.dependencies.Output('output-pizza-type', 'children'),
     [dash.dependencies.Input('dropdown-pizza-type', 'value')])
 def callback_pizza_type(dropdown_value):
-    return "The selected pizza is %s." % dropdown_value
+    return f"The selected pizza is {dropdown_value}."
 
 @app_hello.callback(
     dash.dependencies.Output('output-pizza-size', 'children'),
     [dash.dependencies.Input('dropdown-pizza-type', 'value'),
      dash.dependencies.Input('dropdown-pizza-size', 'value')])
 def callback_size(dropdown_pizza, dropdown_size):
-    return "The chosen pizza is a %s %s one." %(dropdown_size,
-                                                  dropdown_pizza)
+    return f"The chosen pizza is a {dropdown_size} {dropdown_pizza} one."
 
 @app_hello.callback(
     dash.dependencies.Output('output-location', 'children'),
     [dash.dependencies.Input('dropdown-location', 'value')])
 def callback_location(dropdown_location):
-    return "The restaurant is in the city of %s." %(dropdown_location)
+    return f"The restaurant is in the city of {dropdown_location}."
 
 # Press the "STOP" button once you've finished (or restart the Python kernel)
 app_hello.run_server()
